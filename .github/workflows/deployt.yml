@@ -3,41 +3,42 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master
+      - master  # Asegúrate de cambiar esto si usas otra rama principal
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
 
-    - name: Setup SSH
+    steps:
+    - name: 🚀 Checkout del código
+      uses: actions/checkout@v3
+
+    - name: 🔑 Acceder a EC2 y desplegar
       uses: appleboy/ssh-action@v0.1.5
       with:
         host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
         script: |
           echo "🚀 Iniciando despliegue en EC2..."
 
-          # Establecer el directorio de trabajo correcto
-          cd /home/ec2-user/products-ms/products-microservice
+          # Crear el directorio de la app si no existe
+          mkdir -p /home/${{ secrets.EC2_USER }}/products-ms
+          cd /home/${{ secrets.EC2_USER }}/products-ms
 
           # Clonar o actualizar el código
           echo "📦 Clonando o actualizando código fuente..."
           if [ -d "products-microservice" ]; then
             cd products-microservice && git reset --hard && git pull origin master
           else
-            git clone -b master https://github.com/argalarza/products-microservice.git
+            git clone -b master https://github.com/argalarza/products-microservice.git products-microservice
             cd products-microservice
           fi
 
           # Crear archivo .env en el servidor
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
-          DATABASE_URL=***
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
           PORT=3001
           EOF
 
@@ -49,8 +50,9 @@ jobs:
           echo "🛠️ Construyendo y levantando los contenedores..."
           docker-compose -f docker-compose.prod.yml up --build -d
 
-          # Verificar que los contenedores están corriendo
+          # Verificar que el servicio está corriendo
           echo "🔍 Verificando que el servicio está corriendo..."
           docker ps | grep products-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
 
           echo "✅ Despliegue completado exitosamente."
+
