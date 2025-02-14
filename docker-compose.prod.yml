@@ -1,7 +1,7 @@
 services:
  products-ms:
         build:
-          context: ../products-ms
+          context: ../products-microservice
           dockerfile: dockerfile.prod
         image: products-ms
         environment:
