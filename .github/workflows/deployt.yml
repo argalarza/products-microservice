@@ -27,8 +27,8 @@ jobs:
           cd /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
 
           echo "📦 Clonando o actualizando el código fuente..."
-          if [ -d "products-ms" ]; then
-            cd products-ms && git reset --hard && git pull origin master
+          if [ -d "products-microservice" ]; then
+            cd products-microservice && git reset --hard && git pull origin master
           else
             git clone -b master https://github.com/argalarza/products-microservice.git products-microservice
             cd products-microservice
