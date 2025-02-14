@@ -26,24 +26,31 @@ jobs:
           mkdir -p /home/${{ secrets.EC2_USER }}/products-ms
           cd /home/${{ secrets.EC2_USER }}/products-ms
 
+          # Clonar o actualizar el código
           echo "📦 Clonando o actualizando código fuente..."
-          if [ -d "products-ms" ]; then
-            cd products-ms && git reset --hard && git pull origin master
+          if [ -d "products-microservice" ]; then
+            cd products-microservice && git reset --hard && git pull origin master
           else
             git clone -b master https://github.com/argalarza/products-microservice.git
-            cd products-ms
+            cd products-microservice
           fi
 
+          # Crear archivo .env en el servidor
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           PORT=3001
           EOF
 
-          echo "🛠️ Construyendo y levantando los contenedores..."
+          # Detener y eliminar contenedores existentes
+          echo "🛠️ Deteniendo y eliminando contenedores existentes..."
           docker-compose -f docker-compose.prod.yml down --remove-orphans
+
+          # Construir y levantar los contenedores
+          echo "🛠️ Construyendo y levantando los contenedores..."
           docker-compose -f docker-compose.prod.yml up --build -d
 
+          # Verificar que los contenedores están corriendo
           echo "🔍 Verificando que el servicio está corriendo..."
           docker ps | grep products-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
 
