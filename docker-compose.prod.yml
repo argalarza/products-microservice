@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+ products-ms:
+        build:
+          context: ../products-ms
+          dockerfile: dockerfile.prod
+        image: products-ms
+        environment:
+           - PORT=${PORT}
+           - DATABASE_URL=${DATABASE_URL}
+        ports:
+           - "3001:3001"
+        networks:
+           - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+   
+           
