@@ -13,14 +13,14 @@ jobs:
     - name: 🚀 Checkout del código.
       uses: actions/checkout@v3
 
-    - name: 🔑 Acceder a EC2 y desplegar.
+    - name: 🔑 Acceder a EC2 y desplegar
       uses: appleboy/ssh-action@v0.1.5
       with:
         host: ${{ secrets.EC2_HOST }}  # IP de tu servidor EC2
         username: ${{ secrets.EC2_USER }}  # Usuario EC2
         key: ${{ secrets.EC2_PRIVATE_KEY }}  # Llave privada para acceder al servidor EC2
         script: |
-          echo "🚀 Iniciando despliegue en EC2...."
+          echo "🚀 Iniciando despliegue en EC2..."
 
           # Crear el directorio de la app si no existe
           mkdir -p /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
