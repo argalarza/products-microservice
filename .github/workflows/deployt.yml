@@ -1,0 +1,51 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master  # Cambia esto si usas otra rama principal
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚀 Checkout del código
+      uses: actions/checkout@v3
+
+    - name: 🔑 Acceder a EC2 y desplegar
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.EC2_HOST }}  # IP de tu servidor EC2
+        username: ${{ secrets.EC2_USER }}  # Usuario EC2
+        key: ${{ secrets.EC2_PRIVATE_KEY }}  # Llave privada para acceder al servidor EC2
+        script: |
+          echo "🚀 Iniciando despliegue en EC2..."
+
+          # Crear el directorio de la app si no existe
+          mkdir -p /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
+          cd /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
+
+          echo "📦 Clonando o actualizando el código fuente..."
+          if [ -d "products-microservice" ]; then
+            cd products-microservice && git reset --hard && git pull origin master
+          else
+            git clone -b master https://github.com/argalarza/products-microservice.git products-microservice
+            cd products-microservice
+          fi
+
+          echo "📑 Creando archivo .env en el servidor..."
+          cat <<EOF > .env
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          PORT=3000
+          EOF
+
+          echo "🛠️ Construyendo y levantando los contenedores..."
+          docker-compose -f docker-compose.prod.yml down --remove-orphans
+          docker-compose -f docker-compose.prod.yml up --build -d
+
+          echo "🔍 Verificando que el servicio está corriendo..."
+          docker ps | grep products-microservice || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
+
+          echo "✅ Despliegue completado exitosamente."
