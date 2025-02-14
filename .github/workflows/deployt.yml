@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}  # Usuario EC2
         key: ${{ secrets.EC2_PRIVATE_KEY }}  # Llave privada para acceder al servidor EC2
         script: |
-          echo "🚀 Iniciando despliegue en EC2..."
+          echo "🚀 Iniciando despliegue en EC2...."
 
           # Crear el directorio de la app si no existe
           mkdir -p /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
@@ -38,7 +38,7 @@ jobs:
           cat <<EOF > .env
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
-          PORT=3000
+          PORT=3001
           EOF
 
           echo "🛠️ Construyendo y levantando los contenedores..."
