@@ -36,7 +36,7 @@ jobs:
 
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          DATABASE_URL=$postgresql://neondb_owner:npg_AplRcLf3Gu9E@ep-withered-tooth-a8njfs2k-pooler.eastus2.azure.neon.tech/Andy?sslmode=require
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           PORT=3001
           EOF
