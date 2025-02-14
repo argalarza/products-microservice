@@ -30,13 +30,13 @@ jobs:
           if [ -d "auth-ms" ]; then
             cd auth-ms && git reset --hard && git pull origin master
           else
-            git clone -b master https://github.com/argalarza/auth-ms.git auth-ms
+            git clone -b master https://github.com/argalarza/products-microservice.git
             cd auth-ms
           fi
 
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
-          DATABASE_URL=${{ secrets.DATABASE_URL2 }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
           PORT=3001
           EOF
 
