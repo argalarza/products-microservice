@@ -36,9 +36,8 @@ jobs:
 
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          PORT=3000
+          DATABASE_URL=${{ secrets.DATABASE_URL2 }}
+          PORT=3001
           EOF
 
           echo "🛠️ Construyendo y levantando los contenedores..."
