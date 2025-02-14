@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}  # Usuario EC2
         key: ${{ secrets.EC2_PRIVATE_KEY }}  # Llave privada para acceder al servidor EC2
         script: |
-          echo "🚀 Iniciando despliegue en EC2..."
+          echo "🚀 Iniciando despliegue en EC2...."
 
           # Crear el directorio de la app si no existe
           mkdir -p /home/${{ secrets.EC2_USER }}/products-ms/products-microservice
