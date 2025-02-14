@@ -23,15 +23,15 @@ jobs:
           echo "🚀 Iniciando despliegue en EC2..."
 
           # Crear el directorio de la app si no existe
-          mkdir -p /home/${{ secrets.EC2_USER }}/auth-ms
-          cd /home/${{ secrets.EC2_USER }}/auth-ms
+          mkdir -p /home/${{ secrets.EC2_USER }}/products-ms
+          cd /home/${{ secrets.EC2_USER }}/products-ms
 
           echo "📦 Clonando o actualizando código fuente..."
-          if [ -d "auth-ms" ]; then
-            cd auth-ms && git reset --hard && git pull origin master
+          if [ -d "products-ms" ]; then
+            cd products-ms && git reset --hard && git pull origin master
           else
             git clone -b master https://github.com/argalarza/products-microservice.git
-            cd auth-ms
+            cd products-ms
           fi
 
           echo "📑 Creando archivo .env en el servidor..."
@@ -45,6 +45,6 @@ jobs:
           docker-compose -f docker-compose.prod.yml up --build -d
 
           echo "🔍 Verificando que el servicio está corriendo..."
-          docker ps | grep auth-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
+          docker ps | grep products-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
 
           echo "✅ Despliegue completado exitosamente."
