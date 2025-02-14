@@ -3,28 +3,27 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master  # Asegúrate de cambiar esto si usas otra rama principal
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: 🚀 Checkout del código
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: 🔑 Acceder a EC2 y desplegar
+    - name: Setup SSH
       uses: appleboy/ssh-action@v0.1.5
       with:
         host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
         script: |
           echo "🚀 Iniciando despliegue en EC2..."
 
-          # Crear el directorio de la app si no existe
-          mkdir -p /home/${{ secrets.EC2_USER }}/products-ms
-          cd /home/${{ secrets.EC2_USER }}/products-ms
+          # Establecer el directorio de trabajo correcto
+          cd /home/ec2-user/products-ms/products-microservice
 
           # Clonar o actualizar el código
           echo "📦 Clonando o actualizando código fuente..."
@@ -38,7 +37,7 @@ jobs:
           # Crear archivo .env en el servidor
           echo "📑 Creando archivo .env en el servidor..."
           cat <<EOF > .env
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          DATABASE_URL=***
           PORT=3001
           EOF
 
